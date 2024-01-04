@@ -1,0 +1,1 @@
+SELECT * FROM worker ORDER BY Salary DESC LIMIT 1;
