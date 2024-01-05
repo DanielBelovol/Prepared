@@ -5,7 +5,7 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class Database {
-    private static final String URL = "jdbc:h2:~/test"; // Укажите URL вашей базы данных H2
+    private static final String URL = "jdbc:h2:~/test";
     private static final String USERNAME = "sa";
     private static final String PASSWORD = "";
     private static Database instance;

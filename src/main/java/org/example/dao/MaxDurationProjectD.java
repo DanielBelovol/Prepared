@@ -44,8 +44,8 @@ public class MaxDurationProjectD {
         MaxDurationProject maxDurationProject = new MaxDurationProject();
 
         if (resultSet.next()) {
-            maxDurationProject.setName(resultSet.getString("NAME")); // Use the actual column name returned by the query
-            maxDurationProject.setMonthCount(resultSet.getInt("MONTH_COUNT")); // Use the actual column name returned by the query
+            maxDurationProject.setName(resultSet.getString("NAME"));
+            maxDurationProject.setMonthCount(resultSet.getInt("MONTH_COUNT"));
         }
 
         return maxDurationProject;
