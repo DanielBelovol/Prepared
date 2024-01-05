@@ -3,30 +3,37 @@ package org.example.dao;
 import org.example.Database;
 import org.example.models.HighestSalaryWorker;
 
+import java.io.BufferedReader;
 import java.io.IOException;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class HighestSalaryWorkerD {
 
     public List<HighestSalaryWorker> findHighestSalaryWorker() {
         List<HighestSalaryWorker> result = new ArrayList<>();
 
-        try (Connection connection = Database.getInstance().getConnection()) {
+        try (InputStream inputStream = getClass().getClassLoader().getResourceAsStream("find_max_salary_worker.sql");
+             InputStreamReader reader = new InputStreamReader(inputStream);
+             Connection connection = Database.getInstance().getConnection();
+             Statement statement = connection.createStatement()) {
 
-            try (PreparedStatement statement = connection.prepareStatement("RUNSCRIPT FROM 'find_max_salary_worker.sql'");
-                 ResultSet resultSet = statement.executeQuery()) {
+            boolean hasResultSet = statement.execute(new BufferedReader(reader).lines().collect(Collectors.joining("\n")));
 
-                while (resultSet.next()) {
-                    HighestSalaryWorker worker = mapResultSetToHighestSalaryWorker(resultSet);
-                    result.add(worker);
+            if (hasResultSet) {
+                try (ResultSet resultSet = statement.getResultSet()) {
+                    while (resultSet.next()) {
+                        HighestSalaryWorker worker = mapResultSetToHighestSalaryWorker(resultSet);
+                        result.add(worker);
+                    }
                 }
             }
-        } catch (SQLException e) {
+
+        } catch (IOException | SQLException e) {
             e.printStackTrace();
         }
 

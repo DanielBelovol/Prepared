@@ -1,7 +1,7 @@
 SELECT 'OLDEST' AS TYPE, Name, Birthday
 FROM worker
-ORDER BY Birthday ASC LIMIT 1
+WHERE Birthday = (SELECT MIN(Birthday) FROM worker)
 UNION
 SELECT 'YOUNGEST' AS TYPE, Name, Birthday
 FROM worker
-ORDER BY Birthday DESC LIMIT 1;
+WHERE Birthday = (SELECT MAX(Birthday) FROM worker);

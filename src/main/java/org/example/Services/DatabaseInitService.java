@@ -14,5 +14,13 @@ public class DatabaseInitService {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+
+        // TEST
+//        DatabaseQueryService service = new DatabaseQueryService();
+//        System.out.println(service.findHighestSalaryWorker());
+//        System.out.println(service.findMaxDurationProject());
+//        System.out.println(service.findOldestYoungestWorker());
+//        System.out.println(service.findProjectCost());
+//        System.out.println(service.findTopClientProjects());
     }
 }

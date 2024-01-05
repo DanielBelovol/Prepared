@@ -1,34 +1,39 @@
 package org.example.dao;
 
 import org.example.Database;
+import org.example.models.HighestSalaryWorker;
 import org.example.models.MaxDurationProject;
 
+import java.io.BufferedReader;
 import java.io.IOException;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class MaxDurationProjectD {
-
-    private static final String FIND_MAX_DURATION_PROJECT_QUERY_FILE_PATH =
-            "src/main/resources/sql/find_longest_project.sql";
-
     public List<MaxDurationProject> findMaxDurationProject() {
         List<MaxDurationProject> result = new ArrayList<>();
 
-        try (Connection connection = Database.getInstance().getConnection()) {
-            try (PreparedStatement statement = connection.prepareStatement("RUNSCRIPT FROM 'find_longest_project.sql'");
-                 ResultSet resultSet = statement.executeQuery()) {
+        try (InputStream inputStream = getClass().getClassLoader().getResourceAsStream("find_longest_projects.sql");
+             InputStreamReader reader = new InputStreamReader(inputStream);
+             Connection connection = Database.getInstance().getConnection();
+             Statement statement = connection.createStatement()) {
 
-                while (resultSet.next()) {
-                    MaxDurationProject project = mapResultSetToMaxDurationProject(resultSet);
-                    result.add(project);
+            boolean hasResultSet = statement.execute(new BufferedReader(reader).lines().collect(Collectors.joining("\n")));
+
+            if (hasResultSet) {
+                try (ResultSet resultSet = statement.getResultSet()) {
+                    while (resultSet.next()) {
+                        MaxDurationProject worker = mapResultSetToMaxDurationProject(resultSet);
+                        result.add(worker);
+                    }
                 }
             }
-        } catch (SQLException e) {
+
+        } catch (IOException | SQLException e) {
             e.printStackTrace();
         }
 
@@ -38,9 +43,12 @@ public class MaxDurationProjectD {
     private MaxDurationProject mapResultSetToMaxDurationProject(ResultSet resultSet) throws SQLException {
         MaxDurationProject maxDurationProject = new MaxDurationProject();
 
-        maxDurationProject.setName(resultSet.getString("name"));
-        maxDurationProject.setMonthCount(resultSet.getInt("monthCount"));
+        if (resultSet.next()) {
+            maxDurationProject.setName(resultSet.getString("NAME")); // Use the actual column name returned by the query
+            maxDurationProject.setMonthCount(resultSet.getInt("MONTH_COUNT")); // Use the actual column name returned by the query
+        }
 
         return maxDurationProject;
     }
+
 }
