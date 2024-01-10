@@ -1,7 +1,6 @@
 package org.example.dao;
 
-import org.example.Database;
-import org.example.models.MaxDurationProject;
+import org.example.database.Database;
 import org.example.models.OldestYoungestWorker;
 
 import java.io.BufferedReader;

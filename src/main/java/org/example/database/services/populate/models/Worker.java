@@ -1,4 +1,4 @@
-package org.example.services.populate.models;
+package org.example.database.services.populate.models;
 
 public class Worker {
     private int id;

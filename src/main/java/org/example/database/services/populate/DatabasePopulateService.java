@@ -1,24 +1,27 @@
-package org.example.services.populate;
+package org.example.database.services.populate;
 
 import lombok.SneakyThrows;
-import org.example.Database;
-import org.example.services.populate.models.Client;
-import org.example.services.populate.models.Project;
-import org.example.services.populate.models.ProjectWorker;
-import org.example.services.populate.models.Worker;
+import org.example.database.Database;
+import org.example.database.DatabaseUtility;
+import org.example.database.services.populate.models.Project;
+import org.example.database.services.populate.models.ProjectWorker;
+import org.example.database.services.populate.models.Client;
+import org.example.database.services.populate.models.Worker;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 public class DatabasePopulateService {
-    private static PreparedStatement clientStatement = null;
-    private static PreparedStatement workerStatement = null;
-    private static PreparedStatement projectStatement = null;
-    private static PreparedStatement projectWorkerStatement = null;
-
     @SneakyThrows
     public static void main(String[] args) {
+
+        PreparedStatement clientStatement = null;
+        PreparedStatement workerStatement = null;
+        PreparedStatement projectStatement = null;
+        PreparedStatement projectWorkerStatement = null;
+
+        DatabaseUtility databaseUtility = new DatabaseUtility();
         Client[] clients = {
                 new Client(01, "Danya"),
                 new Client(02, "Vanya"),
@@ -71,10 +74,10 @@ public class DatabasePopulateService {
                 new ProjectWorker(4, 7),
                 new ProjectWorker(5, 9)
         };
-        clientStatement = initializeStatementForClient();
-        workerStatement = initializeStatementForWorker();
-        projectStatement = initializeStatementForProject();
-        projectWorkerStatement = initializeStatementForProjectWorker();
+        clientStatement = DatabaseUtility.initializeStatementForClient();
+        workerStatement = DatabaseUtility.initializeStatementForWorker();
+        projectStatement = DatabaseUtility.initializeStatementForProject();
+        projectWorkerStatement = DatabaseUtility.initializeStatementForProjectWorker();
 
         for (Client client : clients) {
             addBatchForClientData(client, clientStatement);
@@ -145,58 +148,5 @@ public class DatabasePopulateService {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-    }
-
-    //______________________INITIALIZE_________________________
-    public static PreparedStatement initializeStatementForClient() {
-        try {
-            Connection conn = Database.getInstance().getConnection();
-
-            PreparedStatement statement = conn.prepareStatement("INSERT INTO client (ID, Name) VALUES (?,?)");
-            return statement;
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    public static PreparedStatement initializeStatementForWorker() {
-        try {
-            Connection conn = Database.getInstance().getConnection();
-
-            PreparedStatement statement = conn.prepareStatement("INSERT INTO worker (ID, Name, Birthday, Level, Salary) VALUES (?,?,?,?,?)");
-            return statement;
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    public static PreparedStatement initializeStatementForProject() {
-        try {
-            Connection conn = Database.getInstance().getConnection();
-
-            PreparedStatement statement = conn.prepareStatement("INSERT INTO project (ID, CLIENT_ID, START_DATE, FINISH_DATE) VALUES (?,?,?,?)");
-            return statement;
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    public static PreparedStatement initializeStatementForProjectWorker() {
-        try {
-            Connection conn = Database.getInstance().getConnection();
-
-            PreparedStatement statement = conn.prepareStatement("INSERT INTO project_worker (PROJECT_ID, WORKER_ID) VALUES (?,?)");
-            return statement;
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return null;
     }
 }

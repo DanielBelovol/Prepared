@@ -1,4 +1,4 @@
-package org.example.services;
+package org.example.database.services;
 
 import org.example.dao.*;
 import org.example.models.*;

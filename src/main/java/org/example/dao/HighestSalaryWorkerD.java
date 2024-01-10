@@ -1,6 +1,6 @@
 package org.example.dao;
 
-import org.example.Database;
+import org.example.database.Database;
 import org.example.models.HighestSalaryWorker;
 
 import java.io.BufferedReader;

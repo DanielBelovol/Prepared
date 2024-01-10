@@ -1,6 +1,6 @@
-package org.example.services;
+package org.example.database.services;
 
-import org.example.Database;
+import org.example.database.Database;
 
 import java.sql.Connection;
 import java.sql.SQLException;
