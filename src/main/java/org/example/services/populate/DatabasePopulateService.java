@@ -1,5 +1,6 @@
 package org.example.services.populate;
 
+import lombok.SneakyThrows;
 import org.example.Database;
 import org.example.services.populate.models.Client;
 import org.example.services.populate.models.Project;
@@ -11,6 +12,12 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 public class DatabasePopulateService {
+    private static PreparedStatement clientStatement = null;
+    private static PreparedStatement workerStatement = null;
+    private static PreparedStatement projectStatement = null;
+    private static PreparedStatement projectWorkerStatement = null;
+
+    @SneakyThrows
     public static void main(String[] args) {
         Client[] clients = {
                 new Client(01, "Danya"),
@@ -64,77 +71,132 @@ public class DatabasePopulateService {
                 new ProjectWorker(4, 7),
                 new ProjectWorker(5, 9)
         };
-        insertClientData(clients);
-        insertWorkerData(workers);
-        insertProjectData(projects);
-        insertProjectWorkerData(projectWorkers);
+        clientStatement = initializeStatementForClient();
+        workerStatement = initializeStatementForWorker();
+        projectStatement = initializeStatementForProject();
+        projectWorkerStatement = initializeStatementForProjectWorker();
 
-    }
-
-    public static void insertClientData(Client[] clients) {
-        try (Connection con = Database.getInstance().getConnection()) {
-            PreparedStatement statement = con.prepareStatement("INSERT INTO client (ID, Name) VALUES (?,?)");
-
-            for (Client client : clients) {
-                statement.setInt(1, client.getId());
-                statement.setString(2, client.getName());
-                statement.addBatch();
-            }
-            statement.executeBatch();
-        } catch (SQLException e) {
-            e.printStackTrace();
+        for (Client client : clients) {
+            addBathesForClientData(client, clientStatement);
         }
+        clientStatement.executeBatch();
+        clientStatement.clearBatch();
 
-    }
-
-    public static void insertWorkerData(Worker[] workers) {
-        try (Connection con = Database.getInstance().getConnection()) {
-            PreparedStatement statement = con.prepareStatement("INSERT INTO worker (ID, Name, Birthday, Level, Salary) VALUES (?,?,?,?,?)");
-
-            for (Worker worker : workers) {
-                statement.setInt(1, worker.getId());
-                statement.setString(2, worker.getName());
-                statement.setString(3, worker.getBirthday());
-                statement.setString(4, worker.getLevel());
-                statement.setInt(5, worker.getSalary());
-                statement.addBatch();
-            }
-            statement.executeBatch();
-        } catch (SQLException e) {
-            e.printStackTrace();
+        for (Worker worker : workers) {
+            addBathesForWorkerData(worker, workerStatement);
         }
+        workerStatement.executeBatch();
+        workerStatement.clearBatch();
+
+        for (Project project : projects) {
+            addBathesForProjectData(project, projectStatement);
+        }
+        projectStatement.executeBatch();
+        projectStatement.clearBatch();
+
+        for (ProjectWorker projectWorker : projectWorkers) {
+            addBathesForProjectWorkerData(projectWorker, projectWorkerStatement);
+        }
+        projectWorkerStatement.executeBatch();
+        projectWorkerStatement.clearBatch();
     }
 
-    public static void insertProjectData(Project[] projects) {
-        try (Connection con = Database.getInstance().getConnection()) {
-            PreparedStatement statement = con.prepareStatement("INSERT INTO project (ID, CLIENT_ID, START_DATE, FINISH_DATE) VALUES (?,?,?,?)");
-
-            for (Project project : projects) {
-                statement.setInt(1, project.getId());
-                statement.setInt(2, project.getClientId());
-                statement.setString(3, project.getStartDate());
-                statement.setString(4, project.getFinishData());
-                statement.addBatch();
-            }
-            statement.executeBatch();
+    public static void addBathesForClientData(Client client, PreparedStatement clientStatement) {
+        try {
+            clientStatement.setInt(1, client.getId());
+            clientStatement.setString(2, client.getName());
+            clientStatement.addBatch();
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
-    public static void insertProjectWorkerData(ProjectWorker[] projectWorkers) {
-        try (Connection con = Database.getInstance().getConnection()) {
-            PreparedStatement statement = con.prepareStatement("INSERT INTO project_worker (PROJECT_ID, WORKER_ID) VALUES (?,?)");
-
-            for (ProjectWorker projectWorker : projectWorkers) {
-                statement.setInt(1, projectWorker.getProjectId());
-                statement.setInt(2, projectWorker.getWorkerId());
-                statement.addBatch();
-            }
-            statement.executeBatch();
+    public static void addBathesForWorkerData(Worker worker, PreparedStatement workerStatement) {
+        try {
+            workerStatement.setInt(1, worker.getId());
+            workerStatement.setString(2, worker.getName());
+            workerStatement.setString(3, worker.getBirthday());
+            workerStatement.setString(4, worker.getLevel());
+            workerStatement.setInt(5, worker.getSalary());
+            workerStatement.addBatch();
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+
+    public static void addBathesForProjectData(Project project, PreparedStatement projectStatement) {
+        try {
+            projectStatement.setInt(1, project.getId());
+            projectStatement.setInt(2, project.getClientId());
+            projectStatement.setString(3, project.getStartDate());
+            projectStatement.setString(4, project.getFinishData());
+            projectStatement.addBatch();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void addBathesForProjectWorkerData(ProjectWorker projectWorker, PreparedStatement projectWorkerStatement) {
+        try {
+            projectWorkerStatement.setInt(1, projectWorker.getProjectId());
+            projectWorkerStatement.setInt(2, projectWorker.getWorkerId());
+            projectWorkerStatement.addBatch();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    //______________________INITIALIZE_________________________
+    public static PreparedStatement initializeStatementForClient() {
+        try {
+            Connection conn = Database.getInstance().getConnection();
+
+            PreparedStatement statement = conn.prepareStatement("INSERT INTO client (ID, Name) VALUES (?,?)");
+            return statement;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public static PreparedStatement initializeStatementForWorker() {
+        try {
+            Connection conn = Database.getInstance().getConnection();
+
+            PreparedStatement statement = conn.prepareStatement("INSERT INTO worker (ID, Name, Birthday, Level, Salary) VALUES (?,?,?,?,?)");
+            return statement;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public static PreparedStatement initializeStatementForProject() {
+        try {
+            Connection conn = Database.getInstance().getConnection();
+
+            PreparedStatement statement = conn.prepareStatement("INSERT INTO project (ID, CLIENT_ID, START_DATE, FINISH_DATE) VALUES (?,?,?,?)");
+            return statement;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public static PreparedStatement initializeStatementForProjectWorker() {
+        try {
+            Connection conn = Database.getInstance().getConnection();
+
+            PreparedStatement statement = conn.prepareStatement("INSERT INTO project_worker (PROJECT_ID, WORKER_ID) VALUES (?,?)");
+            return statement;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }
-
