@@ -77,31 +77,31 @@ public class DatabasePopulateService {
         projectWorkerStatement = initializeStatementForProjectWorker();
 
         for (Client client : clients) {
-            addBathesForClientData(client, clientStatement);
+            addBatchForClientData(client, clientStatement);
         }
         clientStatement.executeBatch();
         clientStatement.clearBatch();
 
         for (Worker worker : workers) {
-            addBathesForWorkerData(worker, workerStatement);
+            addBatchForWorkerData(worker, workerStatement);
         }
         workerStatement.executeBatch();
         workerStatement.clearBatch();
 
         for (Project project : projects) {
-            addBathesForProjectData(project, projectStatement);
+            addBatchForProjectData(project, projectStatement);
         }
         projectStatement.executeBatch();
         projectStatement.clearBatch();
 
         for (ProjectWorker projectWorker : projectWorkers) {
-            addBathesForProjectWorkerData(projectWorker, projectWorkerStatement);
+            addBatchForProjectWorkerData(projectWorker, projectWorkerStatement);
         }
         projectWorkerStatement.executeBatch();
         projectWorkerStatement.clearBatch();
     }
 
-    public static void addBathesForClientData(Client client, PreparedStatement clientStatement) {
+    public static void addBatchForClientData(Client client, PreparedStatement clientStatement) {
         try {
             clientStatement.setInt(1, client.getId());
             clientStatement.setString(2, client.getName());
@@ -111,7 +111,7 @@ public class DatabasePopulateService {
         }
     }
 
-    public static void addBathesForWorkerData(Worker worker, PreparedStatement workerStatement) {
+    public static void addBatchForWorkerData(Worker worker, PreparedStatement workerStatement) {
         try {
             workerStatement.setInt(1, worker.getId());
             workerStatement.setString(2, worker.getName());
@@ -125,7 +125,7 @@ public class DatabasePopulateService {
     }
 
 
-    public static void addBathesForProjectData(Project project, PreparedStatement projectStatement) {
+    public static void addBatchForProjectData(Project project, PreparedStatement projectStatement) {
         try {
             projectStatement.setInt(1, project.getId());
             projectStatement.setInt(2, project.getClientId());
@@ -137,7 +137,7 @@ public class DatabasePopulateService {
         }
     }
 
-    public static void addBathesForProjectWorkerData(ProjectWorker projectWorker, PreparedStatement projectWorkerStatement) {
+    public static void addBatchForProjectWorkerData(ProjectWorker projectWorker, PreparedStatement projectWorkerStatement) {
         try {
             projectWorkerStatement.setInt(1, projectWorker.getProjectId());
             projectWorkerStatement.setInt(2, projectWorker.getWorkerId());
