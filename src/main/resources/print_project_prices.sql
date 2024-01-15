@@ -1,6 +1,6 @@
 SELECT p.ID AS Project_ID,
        c.NAME AS Client_Name,
-       pw.Total_Monthly_Salary * (DATEDIFF('MONTH', p.START_DATE, p.FINISH_DATE) + 1) AS Total_Cost
+       pw.Total_Monthly_Salary * (EXTRACT(MONTH FROM AGE(p.FINISH_DATE, p.START_DATE)) + 1) AS Total_Cost
 FROM project p
 JOIN (
     SELECT pw.PROJECT_ID,

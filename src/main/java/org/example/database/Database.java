@@ -5,9 +5,9 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class Database {
-    private static final String URL = "jdbc:h2:~/test";
-    private static final String USERNAME = "sa";
-    private static final String PASSWORD = "";
+    private String JDBC_URL = "jdbc:postgresql://localhost:5432/mydatabase";  // Замените "mydatabase" на имя вашей базы данных
+    private String USERNAME = "admin";
+    private String PASSWORD = "88888888";
     private static Database instance;
 
     private Database(){
@@ -20,6 +20,6 @@ public class Database {
         return instance;
     }
     public Connection getConnection() throws SQLException {
-        return DriverManager.getConnection(URL, USERNAME, PASSWORD);
+        return DriverManager.getConnection(JDBC_URL, USERNAME, PASSWORD);
     }
 }

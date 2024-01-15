@@ -11,6 +11,8 @@ import org.example.database.services.populate.models.Worker;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 
 public class DatabasePopulateService {
     @SneakyThrows
@@ -118,11 +120,14 @@ public class DatabasePopulateService {
         try {
             workerStatement.setInt(1, worker.getId());
             workerStatement.setString(2, worker.getName());
-            workerStatement.setString(3, worker.getBirthday());
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            java.util.Date utilDate = sdf.parse(worker.getBirthday());
+            java.sql.Date sqlDate = new java.sql.Date(utilDate.getTime());
+            workerStatement.setDate(3, sqlDate);
             workerStatement.setString(4, worker.getLevel());
             workerStatement.setInt(5, worker.getSalary());
             workerStatement.addBatch();
-        } catch (SQLException e) {
+        } catch (SQLException | ParseException e) {
             e.printStackTrace();
         }
     }
@@ -132,10 +137,17 @@ public class DatabasePopulateService {
         try {
             projectStatement.setInt(1, project.getId());
             projectStatement.setInt(2, project.getClientId());
-            projectStatement.setString(3, project.getStartDate());
-            projectStatement.setString(4, project.getFinishData());
+            // Преобразование строки даты в объект Date
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            java.util.Date utilStartDate = sdf.parse(project.getStartDate());
+            java.sql.Date sqlStartDate = new java.sql.Date(utilStartDate.getTime());
+            projectStatement.setDate(3, sqlStartDate);
+            // Преобразование строки даты в объект Date
+            java.util.Date utilFinishDate = sdf.parse(project.getFinishData());
+            java.sql.Date sqlFinishDate = new java.sql.Date(utilFinishDate.getTime());
+            projectStatement.setDate(4, sqlFinishDate);
             projectStatement.addBatch();
-        } catch (SQLException e) {
+        } catch (SQLException | ParseException e) {
             e.printStackTrace();
         }
     }
