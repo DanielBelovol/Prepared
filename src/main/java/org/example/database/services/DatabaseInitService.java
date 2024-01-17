@@ -4,9 +4,6 @@ import org.example.database.Database;
 import org.flywaydb.core.Flyway;
 import org.flywaydb.core.api.MigrationVersion;
 
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.sql.Statement;
 
 public class DatabaseInitService {
     public static void main(String[] args) {
