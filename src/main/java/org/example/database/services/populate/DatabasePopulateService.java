@@ -3,25 +3,24 @@ package org.example.database.services.populate;
 import lombok.SneakyThrows;
 import org.example.database.Database;
 import org.example.database.DatabaseUtility;
+import org.example.database.services.populate.models.Client;
 import org.example.database.services.populate.models.Project;
 import org.example.database.services.populate.models.ProjectWorker;
-import org.example.database.services.populate.models.Client;
 import org.example.database.services.populate.models.Worker;
+import org.flywaydb.core.Flyway;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 public class DatabasePopulateService {
+    Flyway flyway;
+
     @SneakyThrows
     public static void main(String[] args) {
 
-        PreparedStatement clientStatement = null;
-        PreparedStatement workerStatement = null;
-        PreparedStatement projectStatement = null;
-        PreparedStatement projectWorkerStatement = null;
-
         DatabaseUtility databaseUtility = new DatabaseUtility();
+        Database database = Database.getInstance();
         Client[] clients = {
                 new Client(01, "Danya"),
                 new Client(02, "Vanya"),
@@ -74,77 +73,70 @@ public class DatabasePopulateService {
                 new ProjectWorker(4, 7),
                 new ProjectWorker(5, 9)
         };
-        clientStatement = DatabaseUtility.initializeStatementForClient();
-        workerStatement = DatabaseUtility.initializeStatementForWorker();
-        projectStatement = DatabaseUtility.initializeStatementForProject();
-        projectWorkerStatement = DatabaseUtility.initializeStatementForProjectWorker();
 
-        for (Client client : clients) {
-            addBatchForClientData(client, clientStatement);
-        }
-        clientStatement.executeBatch();
-        clientStatement.clearBatch();
+        try (Connection connection = database.getConnection()) {
+            for (Client client : clients) {
+                addDataForClient(client, connection);
+            }
 
-        for (Worker worker : workers) {
-            addBatchForWorkerData(worker, workerStatement);
-        }
-        workerStatement.executeBatch();
-        workerStatement.clearBatch();
+            for (Worker worker : workers) {
+                addDataForWorker(worker, connection);
+            }
 
-        for (Project project : projects) {
-            addBatchForProjectData(project, projectStatement);
-        }
-        projectStatement.executeBatch();
-        projectStatement.clearBatch();
+            for (Project project : projects) {
+                addDataForProject(project, connection);
+            }
 
-        for (ProjectWorker projectWorker : projectWorkers) {
-            addBatchForProjectWorkerData(projectWorker, projectWorkerStatement);
+            for (ProjectWorker projectWorker : projectWorkers) {
+                addDataForProjectWorker(projectWorker, connection);
+            }
         }
-        projectWorkerStatement.executeBatch();
-        projectWorkerStatement.clearBatch();
     }
 
-    public static void addBatchForClientData(Client client, PreparedStatement clientStatement) {
-        try {
-            clientStatement.setInt(1, client.getId());
-            clientStatement.setString(2, client.getName());
-            clientStatement.addBatch();
+    public static void addDataForClient(Client client, Connection connection) {
+        String query = "INSERT INTO client(id, name) VALUES (?, ?)";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+            preparedStatement.setInt(1, client.getId());
+            preparedStatement.setString(2, client.getName());
+            preparedStatement.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
-    public static void addBatchForWorkerData(Worker worker, PreparedStatement workerStatement) {
-        try {
-            workerStatement.setInt(1, worker.getId());
-            workerStatement.setString(2, worker.getName());
-            workerStatement.setString(3, worker.getBirthday());
-            workerStatement.setString(4, worker.getLevel());
-            workerStatement.setInt(5, worker.getSalary());
-            workerStatement.addBatch();
+    public static void addDataForWorker(Worker worker, Connection connection) {
+        String query = "INSERT INTO worker(id, name, birthday, level, salary) VALUES (?, ?, ?, ?, ?)";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+            preparedStatement.setInt(1, worker.getId());
+            preparedStatement.setString(2, worker.getName());
+            preparedStatement.setString(3, worker.getBirthday());
+            preparedStatement.setString(4, worker.getLevel());
+            preparedStatement.setInt(5, worker.getSalary());
+            preparedStatement.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
-
-    public static void addBatchForProjectData(Project project, PreparedStatement projectStatement) {
-        try {
-            projectStatement.setInt(1, project.getId());
-            projectStatement.setInt(2, project.getClientId());
-            projectStatement.setString(3, project.getStartDate());
-            projectStatement.setString(4, project.getFinishData());
-            projectStatement.addBatch();
+    public static void addDataForProject(Project project, Connection connection) {
+        String query = "INSERT INTO project(id, client_id, start_date, finish_date) VALUES (?, ?, ?, ?)";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+            preparedStatement.setInt(1, project.getId());
+            preparedStatement.setInt(2, project.getClientId());
+            preparedStatement.setString(3, project.getStartDate());
+            preparedStatement.setString(4, project.getFinishData());
+            preparedStatement.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
-    public static void addBatchForProjectWorkerData(ProjectWorker projectWorker, PreparedStatement projectWorkerStatement) {
-        try {
-            projectWorkerStatement.setInt(1, projectWorker.getProjectId());
-            projectWorkerStatement.setInt(2, projectWorker.getWorkerId());
-            projectWorkerStatement.addBatch();
+    public static void addDataForProjectWorker(ProjectWorker projectWorker, Connection connection) {
+        String query = "INSERT INTO project_worker(project_id, worker_id) VALUES (?, ?)";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+            preparedStatement.setInt(1, projectWorker.getProjectId());
+            preparedStatement.setInt(2, projectWorker.getWorkerId());
+            preparedStatement.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }

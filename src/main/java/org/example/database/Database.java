@@ -1,12 +1,17 @@
 package org.example.database;
 
+import lombok.Getter;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class Database {
+    @Getter
     private static final String URL = "jdbc:h2:~/test";
+    @Getter
     private static final String USERNAME = "sa";
+    @Getter
     private static final String PASSWORD = "";
     private static Database instance;
 
