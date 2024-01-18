@@ -10,6 +10,7 @@ public class DatabaseInitService {
         Flyway flyway = Flyway.configure().dataSource(Database.getURL(),Database.getUSERNAME(),Database.getPASSWORD()).baselineOnMigrate(true).locations("classpath:db.migration").target(MigrationVersion.fromVersion("1")).load();
         flyway.migrate();
 
+
         // TEST
 //        DatabaseQueryService service = new DatabaseQueryService();
 //        System.out.println(service.findHighestSalaryWorker());
