@@ -1,5 +1,4 @@
 package org.example.database;
-
 import lombok.Getter;
 
 import java.sql.Connection;

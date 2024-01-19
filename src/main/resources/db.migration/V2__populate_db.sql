@@ -13,7 +13,7 @@ INSERT INTO worker (ID, Name, Birthday, Level, Salary) VALUES (06, 'Gregor McBoo
 INSERT INTO worker (ID, Name, Birthday, Level, Salary) VALUES (07, 'Suren Vasardyan', '1991-11-03', 'Junior', 900);
 INSERT INTO worker (ID, Name, Birthday, Level, Salary) VALUES (08, 'Li Mo', '1995-07-19', 'Trainee', 700);
 INSERT INTO worker (ID, Name, Birthday, Level, Salary) VALUES (09, 'Dunkan Bread', '1989-07-17', 'Junior', 850);
-INSERT INTO worker (ID, Name, Birthday, Level, Salary) VALUES (10, 'Dan', '1992-09-11', 'Trainee', 100);
+INSERT INTO worker (ID, Name, Birthday, Level, Salary) VALUES (10, 'Dan', '1992-09-11', 'Trainee', 1001);
 
 INSERT INTO project (ID, CLIENT_ID, START_DATE, FINISH_DATE) VALUES (01, 01, '2023-01-01', '2023-12-30');
 INSERT INTO project (ID, CLIENT_ID, START_DATE, FINISH_DATE) VALUES (02, 02, '2023-02-01', '2023-11-30');
